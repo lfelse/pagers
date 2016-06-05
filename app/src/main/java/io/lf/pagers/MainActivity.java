@@ -1,6 +1,8 @@
 package io.lf.pagers;
 
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -20,6 +22,13 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private TextView text;
     private LinearLayout dots;
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+            handler.sendEmptyMessageDelayed(0, 2000);
+        }
+    };
 
     private ArrayList<Page> pages = new ArrayList<>();
     private ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
@@ -60,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         text = (TextView) findViewById(R.id.text);
         dots = (LinearLayout) findViewById(R.id.dots);
+        handler.sendEmptyMessageDelayed(0, 2000);
     }
     private void initData() {
         pages.add(new Page(R.drawable.bird_red, "red bird"));
@@ -117,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         viewPager.removeOnPageChangeListener(onPageChangeListener);
+        handler.removeCallbacksAndMessages(null);
     }
 
     private class CustomPagerAdapter extends PagerAdapter{
