@@ -1,14 +1,11 @@
 package io.lf.pagers;
 
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -52,6 +49,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         text = (TextView) findViewById(R.id.text);
         dots = (LinearLayout) findViewById(R.id.dots);
@@ -68,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(new CustomPagerAdapter());
         //viewPager.setOnPageChangeListener();
         viewPager.addOnPageChangeListener(onPageChangeListener);
+        viewPager.setCurrentItem(Integer.MAX_VALUE/2 - Integer.MAX_VALUE/2 % pages.size());
         updateText();
 
     }
@@ -89,11 +95,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateText() {
-        int position = viewPager.getCurrentItem();
+        int position = viewPager.getCurrentItem() % pages.size();
         text.setText(pages.get(position).getInfo());
 
         for (int i = 0; i < dots.getChildCount(); i++) {
-            dots.getChildAt(i).setEnabled(viewPager.getCurrentItem() == i);
+            dots.getChildAt(i).setEnabled(position == i);
             /*if(Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
                 dots.getChildAt(i).setBackground(getDrawableCompat(R.drawable.selecter));
             }else {
@@ -117,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return pages.size();
+            return Integer.MAX_VALUE;
         }
 
         @Override
@@ -131,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
             ViewGroup.LayoutParams layouts = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);
             imageView.setLayoutParams(layouts);
-            imageView.setImageResource(pages.get(position).getResId());
+            imageView.setImageResource(pages.get(position % pages.size()).getResId());
             //imageView.setBackgroundColor(Color.MAGENTA);
             container.addView(imageView);
             return imageView;
